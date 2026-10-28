@@ -44,6 +44,8 @@ El progreso y los favoritos se guardan en el navegador, sin cuentas ni sincroniz
 
 Sitio estático en Cloudflare Pages. Comando de build: `npm run build`. Directorio de salida: `dist`. Rama de producción: `main`.
 
+La publicación inicial utiliza carga directa desde el panel de Cloudflare. Los siguientes pushes a GitHub no publican automáticamente. Para actualizar, ejecutar las pruebas y el build y subir el contenido de `dist/` al mismo proyecto, o usar `wrangler pages deploy dist --project-name forja-del-invocador --branch main` con una sesión autorizada. El repositorio de GitHub se mantiene privado; la página publicada es pública.
+
 ## Próximas extensiones
 
 - Apodos comunitarios revisados y relacionados con el ID oficial.

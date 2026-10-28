@@ -1,10 +1,21 @@
-import {mkdir, writeFile} from 'node:fs/promises';
-import {locales} from '../src/core.js';
-import {getJson} from '../src/data.js';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { locales } from '../src/core.js';
+import { getJson } from '../src/data.js';
 const versions = await getJson('https://ddragon.leagueoflegends.com/api/versions.json');
 const version = versions[0];
-const data = Object.fromEntries(await Promise.all(locales.map(async locale => [locale, await getJson(`https://ddragon.leagueoflegends.com/cdn/${version}/data/${locale}/item.json`)])));
-if (Object.values(data).some(value => value.version !== version || !value.data)) throw new Error('Catálogo inconsistente');
-await mkdir('public/data', {recursive: true});
-await writeFile('public/data/items.json', JSON.stringify({version, downloadedAt: new Date().toISOString(), data}) + '\r\n');
+const data = Object.fromEntries(
+  await Promise.all(
+    locales.map(async (locale) => [
+      locale,
+      await getJson(`https://ddragon.leagueoflegends.com/cdn/${version}/data/${locale}/item.json`),
+    ]),
+  ),
+);
+if (Object.values(data).some((value) => value.version !== version || !value.data))
+  throw new Error('Catálogo inconsistente');
+await mkdir('public/data', { recursive: true });
+await writeFile(
+  'public/data/items.json',
+  JSON.stringify({ version, downloadedAt: new Date().toISOString(), data }) + '\r\n',
+);
 console.log(`Catálogo ${version}: ${locales.length} idiomas sincronizados.`);
