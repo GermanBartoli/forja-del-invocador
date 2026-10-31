@@ -335,10 +335,28 @@ window.addEventListener(
       $('#library')
     ) {
       event.preventDefault();
-      heroScrollUntil = Date.now() + 900;
-      $('#library').scrollIntoView({
-        behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
-      });
+      const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const duration = 800;
+      heroScrollUntil = Date.now() + (reducedMotion ? 0 : duration + 100);
+      const start = window.scrollY;
+      const padding = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+      const destination = Math.min(
+        start + $('#library').getBoundingClientRect().top - padding,
+        document.documentElement.scrollHeight - window.innerHeight,
+      );
+      if (reducedMotion) {
+        window.scrollTo({ top: destination, behavior: 'instant' });
+        return;
+      }
+      const startedAt = performance.now();
+      const animate = (now) => {
+        if (page() !== 'guide' || dialog.open) return;
+        const progress = Math.min((now - startedAt) / duration, 1);
+        const eased = progress < 0.5 ? 4 * progress ** 3 : 1 - (-2 * progress + 2) ** 3 / 2;
+        window.scrollTo({ top: start + (destination - start) * eased, behavior: 'instant' });
+        if (progress < 1) requestAnimationFrame(animate);
+      };
+      requestAnimationFrame(animate);
     }
   },
   { passive: false },
