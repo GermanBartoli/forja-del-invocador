@@ -1,5 +1,10 @@
 # Forja del Invocador
 
+## Enlaces
+
+- [Sitio publicado en Cloudflare Pages](https://forja-del-invocador.pages.dev/)
+- [Repositorio en GitHub](https://github.com/GermanBartoli/forja-del-invocador)
+
 Una armería para aprender los objetos de League of Legends, creada por Germán Bartoli con la colaboración de Codex.
 
 ## Primera versión
