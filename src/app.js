@@ -373,6 +373,14 @@ const headerObserver = new ResizeObserver(([entry]) => {
   document.documentElement.style.setProperty('--header-height', entry.target.offsetHeight + 'px');
 });
 headerObserver.observe($('.header'));
+$('#locale').addEventListener('pointerdown', (event) => {
+  event.currentTarget.dataset.pointerFocus = 'true';
+});
+for (const type of ['keydown', 'blur']) {
+  $('#locale').addEventListener(type, (event) => {
+    delete event.currentTarget.dataset.pointerFocus;
+  });
+}
 async function init() {
   shell();
   $('#status').textContent = t.loading;

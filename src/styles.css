@@ -1263,12 +1263,14 @@ progress::-webkit-progress-value {
   }
   .hero-art {
     position: absolute;
-    right: -205px;
-    left: auto;
-    top: 30px;
-    opacity: 0.16;
-    transform: scale(0.85);
-    z-index: -1;
+    right: auto;
+    left: 50%;
+    top: 50%;
+    width: 310px;
+    opacity: 0.22;
+    transform: translate(-50%, -50%) scale(0.85);
+    z-index: 0;
+    pointer-events: none;
   }
   .hero-actions {
     gap: 20px;
@@ -1450,7 +1452,9 @@ progress::-webkit-progress-value {
 /* Portada completa y controles integrados con la paleta. */
 .hero {
   min-height: calc(100svh - var(--header-height, 94px));
+  min-height: calc(100dvh - var(--header-height, 94px));
 }
+.locale select[data-pointer-focus]:focus { outline: none; }
 .toolbar select {
   appearance: none;
   padding: 12px 36px 12px 14px;

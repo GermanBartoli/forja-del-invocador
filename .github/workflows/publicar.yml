@@ -1,12 +1,13 @@
-name: Validar y publicar Forja del Invocador
+name: Validar y publicar en Cloudflare y GitHub Pages
 on:
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: forja-${{ github.ref }}
+  group: publicacion-${{ github.ref }}
   cancel-in-progress: false
 jobs:
   validar:
@@ -16,11 +17,53 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - run: npm test
-      - run: npm run build
+      - name: Verificar y compilar
+        run: |
+          npm test
+          npm run build
+      - name: Preparar GitHub Pages
+        run: node scripts/preparar-github-pages.mjs forja-del-invocador https://forja-del-invocador.pages.dev
+      - name: Guardar compilación de Cloudflare
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloudflare
+          path: dist
+          include-hidden-files: true
+      - name: Guardar compilación de GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-github
+  cloudflare:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: validar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/download-artifact@v4
+        with:
+          name: cloudflare
+          path: dist
       - name: Publicar en Cloudflare Pages
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: 3523de741e46113fc18e3e1dd118f1d2
-        run: npx --yes wrangler@4.151.3 pages deploy dist --project-name forja-del-invocador --branch main --commit-hash "${{ github.sha }}"
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=forja-del-invocador --branch=main --commit-hash=${{ github.sha }}
+  github-pages:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: validar
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@v5
+      - name: Publicar en GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
