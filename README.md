@@ -44,7 +44,7 @@ El progreso y los favoritos se guardan en el navegador, sin cuentas ni sincroniz
 
 Sitio estático en Cloudflare Pages. Comando de build: `npm run build`. Directorio de salida: `dist`. Rama de producción: `main`.
 
-La publicación inicial utiliza carga directa desde el panel de Cloudflare. Los siguientes pushes a GitHub no publican automáticamente. Para actualizar, ejecutar las pruebas y el build y subir el contenido de `dist/` al mismo proyecto, o usar `wrangler pages deploy dist --project-name forja-del-invocador --branch main` con una sesión autorizada. El repositorio de GitHub se mantiene privado; la página publicada es pública.
+Cada push a `main` ejecuta `.github/workflows/publicar.yml`: pruebas, build y despliegue en el proyecto existente `forja-del-invocador`. Los pull requests y las otras ramas solo validan. El token se guarda en el secreto de GitHub Actions `CLOUDFLARE_API_TOKEN`; nunca en los archivos del proyecto. Wrangler tiene una versión fija en el workflow y no agrega dependencias a la aplicación.
 
 ## Próximas extensiones
 
@@ -55,3 +55,11 @@ La publicación inicial utiliza carga directa desde el panel de Cloudflare. Los 
 ## Créditos
 
 Datos e íconos: [Riot Data Dragon](https://developer.riotgames.com/docs/lol#data-dragon). Forja del Invocador no está respaldado por Riot Games. League of Legends y sus recursos pertenecen a Riot Games.
+
+## Mejoras de la versión 1.1.0
+
+- Portada de pantalla completa con salto al arsenal al desplazar la rueda.
+- Cinco ilustraciones de objetos de 512 px incluidas localmente desde [League of Legends Wiki](https://wiki.leagueoflegends.com/en-us/Infinity_Edge). Los recursos pertenecen a Riot Games.
+- Recetas con imagen y nombre del resultado; diez objetivos diferentes por partida.
+- Rutas `#games/icon`, `#games/recipe` y `#games/word` para volver al entrenamiento con el navegador.
+- Filtros persistentes y enlace al portfolio de Germán Bartoli.

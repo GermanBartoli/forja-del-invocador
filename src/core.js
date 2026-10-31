@@ -71,9 +71,10 @@ export function shuffle(items, random = Math.random) {
   }
   return result;
 }
-export function makeRound(items, mode, previous) {
+export function makeRound(items, mode, previous = []) {
   const pool = items.filter((item) => mode !== 'recipe' || item.from?.length);
-  const target = shuffle(pool.filter((item) => item.id !== previous))[0] || pool[0];
+  const excluded = new Set(Array.isArray(previous) ? previous : [previous]);
+  const target = shuffle(pool.filter((item) => !excluded.has(item.id)))[0];
   if (!target) return null;
   const recipeKey = (item) => [...(item.from || [])].sort().join(',');
   const seen = new Set([target.name]);

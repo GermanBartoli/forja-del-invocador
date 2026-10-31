@@ -1439,3 +1439,48 @@ progress::-webkit-progress-value {
     animation: none !important;
   }
 }
+
+/* Portada completa y controles integrados con la paleta. */
+.hero {
+  min-height: calc(100svh - var(--header-height, 94px));
+}
+.toolbar select {
+  appearance: none;
+  padding: 12px 36px 12px 14px;
+  cursor: pointer;
+  background-image: url('/images/chevron.svg');
+  background-repeat: no-repeat;
+  background-position: right 13px center;
+}
+.toolbar select:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold);
+}
+.toolbar option {
+  background: var(--panel);
+  color: var(--text);
+}
+.revealed-item img {
+  box-shadow: 0 0 24px #d4b57533;
+}
+.portfolio-link {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 16px;
+  margin: 26px auto 0;
+  color: var(--gold);
+  font-size: 12px;
+}
+.portfolio-link img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+@media (max-width: 600px) {
+  .hero {
+    display: flex;
+    align-items: center;
+  }
+}

@@ -23,14 +23,17 @@ function write(key, value) {
 }
 let locale = read('forja.locale', 'es_AR');
 if (!locales.includes(locale)) locale = 'es_AR';
+const filters = read('forja.filters', {}) || {};
 let t = dictionary(locale),
   payload,
   items = [],
-  query = '',
-  category = 'all',
-  sort = 'name',
-  tier = '',
+  query = typeof filters.query === 'string' ? filters.query : '',
+  category = Object.hasOwn(categories, filters.category) ? filters.category : 'all',
+  sort = ['name', 'price', 'priceDesc'].includes(filters.sort) ? filters.sort : 'name',
+  tier = ['basic', 'component', 'finished'].includes(filters.tier) ? filters.tier : '',
   game = null;
+const saveFilters = () => write('forja.filters', { query, category, sort, tier });
+const gameMode = () => /^#games\/(icon|recipe|word)$/.exec(location.hash)?.[1];
 const savedIds = read('forja.favorites', []);
 const favorites = new Set(Array.isArray(savedIds) ? savedIds : []);
 let progress = read('forja.progress', { played: 0, correct: 0 });
@@ -39,7 +42,11 @@ if (!Number.isFinite(progress.played) || !Number.isFinite(progress.correct))
 const workspace = $('#workspace');
 const dialog = $('#detail');
 const page = () =>
-  ['games', 'favorites'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'guide';
+  gameMode()
+    ? 'games'
+    : ['games', 'favorites'].includes(location.hash.slice(1))
+      ? location.hash.slice(1)
+      : 'guide';
 const img = (id, alt = '', className = '') =>
   `<img class="${className}" src="${iconUrl(payload.version, id)}" alt="${escape(alt)}" width="64" height="64" loading="lazy">`;
 const itemName = (id) => payload.data[locale].data[id]?.name || id;
@@ -49,6 +56,8 @@ const itemTier = (item) =>
       ? 'component'
       : 'finished'
     : 'basic';
+const heroImg = (id) =>
+  `<img src="/images/items/${id}.png" alt="" width="512" height="512" fetchpriority="high">`;
 function shell() {
   document.documentElement.lang = locale.replace('_', '-');
   $('#locale').value = locale;
@@ -60,9 +69,9 @@ function shell() {
     .join('');
   $('#hero').hidden = page() !== 'guide';
   $('#hero').innerHTML =
-    `<div class="hero-copy"><p class="eyebrow"><span class="line"></span>${t.eyebrow}</p><h1>${t.title}<br><em>${t.accent}</em></h1><p class="intro">${t.intro}</p><div class="hero-actions"><a class="button primary" href="#games">${t.practice} <span>↗</span></a><a class="text-link" href="#library">${t.explore} ↓</a></div><div class="hero-meta"><span class="live-dot"></span>${t.official}<span>◇</span>${t.regions}</div></div><div class="hero-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbit orbit-three"></div><div class="art-center">${payload ? img('3031') : ''}</div><div class="art-item art-a">${payload ? img('3089') : ''}</div><div class="art-item art-b">${payload ? img('3083') : ''}</div><div class="art-item art-c">${payload ? img('3157') : ''}</div><div class="art-item art-d">${payload ? img('3078') : ''}</div><span class="art-label">ARSENAL / ${payload?.version || 'LOL'}</span><span class="spark s1">✧</span><span class="spark s2">✧</span></div>`;
+    `<div class="hero-copy"><p class="eyebrow"><span class="line"></span>${t.eyebrow}</p><h1>${t.title}<br><em>${t.accent}</em></h1><p class="intro">${t.intro}</p><div class="hero-actions"><a class="button primary" href="#games">${t.practice} <span>↗</span></a><a class="text-link" href="#library">${t.explore} ↓</a></div><div class="hero-meta"><span class="live-dot"></span>${t.official}<span>◇</span>${t.regions}</div></div><div class="hero-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbit orbit-three"></div><div class="art-center">${payload ? heroImg('3031') : ''}</div><div class="art-item art-a">${payload ? heroImg('3089') : ''}</div><div class="art-item art-b">${payload ? heroImg('3083') : ''}</div><div class="art-item art-c">${payload ? heroImg('3157') : ''}</div><div class="art-item art-d">${payload ? heroImg('3078') : ''}</div><span class="art-label">ARSENAL / ${payload?.version || 'LOL'}</span><span class="spark s1">✧</span><span class="spark s2">✧</span></div>`;
   $('#footer').innerHTML =
-    `<div class="footer-top"><a class="footer-brand" href="#guide">◇ FORJA DEL INVOCADOR</a><span>${t.footer}</span><a href="https://developer.riotgames.com/docs/lol#data-dragon" target="_blank" rel="noreferrer">${t.source} ↗</a></div><p>${t.disclaimer}</p><p>${t.local}</p>`;
+    `<div class="footer-top"><a class="footer-brand" href="#guide">◇ FORJA DEL INVOCADOR</a><span>${t.footer}</span><a href="https://developer.riotgames.com/docs/lol#data-dragon" target="_blank" rel="noreferrer">${t.source} ↗</a></div><p>${t.disclaimer}</p><p>${t.local}</p><a class="portfolio-link" href="https://germanbartoli.pages.dev/" target="_blank" rel="noreferrer"><img src="/images/german-bartoli.webp" alt="Germán Bartoli — Portfolio" width="100" height="100" loading="lazy"><span>Portfolio ↗</span></a>`;
   if (payload)
     $('#status').innerHTML =
       `<span class="${payload.backup ? 'warning' : 'live-dot'}">${payload.backup ? '!' : ''}</span><strong>${t.patch} ${payload.version}</strong><span>${payload.backup ? t.backup : t.live}</span>`;
@@ -87,10 +96,12 @@ function render() {
     )}</div><p class="filter-note">${t.categoryNote}</p></aside><div class="catalog"><div class="toolbar"><label class="search"><span>⌕</span><input id="search" type="search" value="${escape(query)}" placeholder="${t.search}" aria-label="${t.searchLabel}" autocomplete="off"><kbd>/</kbd></label><select id="sort" aria-label="${t.sort}">${['name', 'price', 'priceDesc'].map((key) => `<option value="${key}" ${sort === key ? 'selected' : ''}>${t[key]}</option>`).join('')}</select></div><div class="catalog-meta"><div class="tier-tabs">${['', 'basic', 'component', 'finished'].map((key) => `<button data-tier="${key}" class="${tier === key ? 'active' : ''}" aria-pressed="${tier === key}">${t[key || 'any']}</button>`).join('')}</div><span id="count" aria-live="polite"></span></div><div id="grid" class="item-grid"></div><p class="catalog-note">${t.caveat}</p></div></div></section>`;
   $('#search').addEventListener('input', (event) => {
     query = event.target.value;
+    saveFilters();
     renderGrid();
   });
   $('#sort').addEventListener('change', (event) => {
     sort = event.target.value;
+    saveFilters();
     renderGrid();
   });
   renderGrid();
@@ -145,6 +156,15 @@ function detail(id) {
   dialog.scrollTop = 0;
 }
 function renderGames() {
+  if (gameMode() && (!game || game.mode !== gameMode())) {
+    game = { mode: gameMode(), index: 1, score: 0, used: [] };
+    nextRound();
+    return;
+  }
+  if (game?.finished) {
+    results();
+    return;
+  }
   if (game) {
     renderRound();
     return;
@@ -163,11 +183,12 @@ function renderGames() {
     )}</div><div class="progress-panel"><div><p class="eyebrow">${t.progress}</p><p>${t.local}</p></div><div><strong>${progress.played}</strong><span>${t.practiced}</span></div><div><strong>${progress.played ? Math.round((progress.correct / progress.played) * 100) : 0}%</strong><span>${t.accuracy}</span></div></div></section>`;
 }
 function nextRound() {
-  game.round = makeRound(items, game.mode, game.round?.target.id);
+  game.round = makeRound(items, game.mode, game.used);
   if (!game.round) {
     workspace.textContent = t.noPool;
     return;
   }
+  game.used.push(game.round.target.id);
   renderRound();
 }
 function renderRound() {
@@ -177,7 +198,7 @@ function renderRound() {
   const target = payload.data[locale].data[r.target.id];
   const image =
     game.mode === 'recipe'
-      ? `<div class="recipe-challenge">${r.target.from.map((id) => `<div>${img(id, itemName(id))}<span>${escape(itemName(id))}</span></div>`).join('<span class="plus">+</span>')}<span class="plus">→</span><div class="mystery">?</div></div>`
+      ? `<div class="recipe-challenge">${r.target.from.map((id) => `<div>${img(id, itemName(id))}<span>${escape(itemName(id))}</span></div>`).join('<span class="plus">+</span>')}<span class="plus">→</span>${r.answered ? `<div class="revealed-item">${img(r.target.id, target.name)}<span>${escape(target.name)}</span></div>` : '<div class="mystery">?</div>'}</div>`
       : img(r.target.id, '', 'quiz-image');
   workspace.innerHTML = `<section class="quiz"><button class="text-link" data-back>← ${t.back}</button><div class="quiz-meta"><span>${t[game.mode + 'Game']}</span><span>${t.round} ${game.index} / 10</span><span>${t.score}: ${game.score}</span></div><progress value="${game.index - 1}" max="10" aria-label="${t.progress}"></progress><div class="quiz-center"><p class="eyebrow">${t[game.mode === 'recipe' ? 'recipeGame' : 'iconGame']}</p><h1>${game.mode === 'recipe' ? t.buildWhat : t.what}</h1>${image}${game.mode === 'word' ? `<form id="answer-form"><input id="answer" aria-label="${t.answer}" placeholder="${t.answer}" autocomplete="off" ${r.answered ? 'disabled' : ''}><button class="button primary" ${r.answered ? 'disabled' : ''}>${t.check}</button></form><p class="muted">${t.validNames}</p>` : `<div class="answer-options">${r.options.map((option, index) => `<button class="answer-option ${r.answered && option.id === r.target.id ? 'correct' : ''} ${r.answered && r.selected === option.id && option.id !== r.target.id ? 'incorrect' : ''}" data-answer="${option.id}" ${r.answered ? 'disabled' : ''}><span>${String.fromCharCode(65 + index)}</span>${escape(itemName(option.id))}</button>`).join('')}</div>`}<div id="feedback" aria-live="polite">${r.answered ? `<div class="feedback ${r.correct ? 'success' : 'failure'}"><strong>${r.correct ? t.correct : t.wrong + ': ' + escape(target.name)}</strong><button class="text-link" data-item="${r.target.id}">${t.learn} ↗</button></div>` : ''}</div><div class="quiz-actions">${r.answered ? `<button class="button primary" data-next>${game.index === 10 ? t.finish : t.next} →</button>` : `<button class="text-link" data-skip>${t.skip} →</button>`}</div></div></section>`;
   $('#answer-form')?.addEventListener('submit', (event) => {
@@ -214,21 +235,27 @@ document.addEventListener('click', (event) => {
   }
   if (button.dataset.category) {
     category = button.dataset.category;
+    saveFilters();
     render();
   }
   if (button.hasAttribute('data-tier')) {
     tier = button.dataset.tier;
+    saveFilters();
     render();
   }
   if (button.hasAttribute('data-reset')) {
     query = '';
     category = 'all';
     tier = '';
+    sort = 'name';
+    saveFilters();
     render();
   }
   if (button.dataset.start) {
-    game = { mode: button.dataset.start, index: 1, score: 0 };
-    nextRound();
+    const mode = button.dataset.start;
+    game = null;
+    if (gameMode() === mode) renderGames();
+    else location.hash = `games/${mode}`;
   }
   if (button.dataset.answer)
     submitAnswer(button.dataset.answer === game.round.target.id, button.dataset.answer);
@@ -244,7 +271,7 @@ document.addEventListener('click', (event) => {
   }
   if (button.hasAttribute('data-back')) {
     game = null;
-    renderGames();
+    location.hash = 'games';
   }
   if (button.hasAttribute('data-retry')) init();
 });
@@ -259,6 +286,8 @@ $('#locale').addEventListener('change', (event) => {
 });
 window.addEventListener('hashchange', () => {
   if (location.hash === '#library') {
+    game = null;
+    render();
     document.getElementById('library')?.scrollIntoView({ behavior: 'smooth' });
     return;
   }
@@ -289,6 +318,35 @@ dialog.addEventListener('click', (event) => {
       dialog.close();
   }
 });
+// El gesto inicial lleva al arsenal; el resto de la página conserva su desplazamiento normal.
+let heroScrollUntil = 0;
+window.addEventListener(
+  'wheel',
+  (event) => {
+    if (page() !== 'guide' || dialog.open || event.ctrlKey || event.deltaY <= 0) return;
+    if (Date.now() < heroScrollUntil) {
+      event.preventDefault();
+      return;
+    }
+    const hero = $('#hero');
+    if (
+      !hero.hidden &&
+      hero.getBoundingClientRect().bottom > window.innerHeight / 2 &&
+      $('#library')
+    ) {
+      event.preventDefault();
+      heroScrollUntil = Date.now() + 900;
+      $('#library').scrollIntoView({
+        behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+      });
+    }
+  },
+  { passive: false },
+);
+const headerObserver = new ResizeObserver(([entry]) => {
+  document.documentElement.style.setProperty('--header-height', entry.target.offsetHeight + 'px');
+});
+headerObserver.observe($('.header'));
 async function init() {
   shell();
   $('#status').textContent = t.loading;

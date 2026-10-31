@@ -57,3 +57,26 @@ test('Las recetas no ofrecen como distractor otro objeto con los mismos componen
     assert.equal(options.filter((item) => key(item) === key(target)).length, 1);
   }
 });
+
+test('Una partida completa no repite objetivos en ninguno de los modos', () => {
+  for (const mode of ['icon', 'recipe', 'word']) {
+    const used = [];
+    for (let i = 0; i < 10; i++) {
+      const round = makeRound(items, mode, used);
+      assert.ok(round);
+      assert.ok(!used.includes(round.target.id));
+      used.push(round.target.id);
+    }
+    assert.equal(new Set(used).size, 10);
+  }
+});
+test('Al agotar el catálogo no se reutilizan objetivos', () => {
+  assert.equal(
+    makeRound(
+      items,
+      'icon',
+      items.map((item) => item.id),
+    ),
+    null,
+  );
+});
