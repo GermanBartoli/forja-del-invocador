@@ -32,6 +32,7 @@ let t = dictionary(locale),
   sort = ['name', 'price', 'priceDesc'].includes(filters.sort) ? filters.sort : 'name',
   tier = ['basic', 'component', 'finished'].includes(filters.tier) ? filters.tier : '',
   game = null;
+let showRecipeImages = read('forja.recipeImages', true) !== false;
 const saveFilters = () => write('forja.filters', { query, category, sort, tier });
 const gameMode = () => /^#games\/(icon|recipe|word)$/.exec(location.hash)?.[1];
 const savedIds = read('forja.favorites', []);
@@ -99,6 +100,14 @@ function render() {
     saveFilters();
     renderGrid();
   });
+  $('#sort').addEventListener('pointerdown', (event) => {
+    event.currentTarget.dataset.pointerFocus = 'true';
+  });
+  for (const type of ['keydown', 'blur']) {
+    $('#sort').addEventListener(type, (event) => {
+      delete event.currentTarget.dataset.pointerFocus;
+    });
+  }
   $('#sort').addEventListener('change', (event) => {
     sort = event.target.value;
     saveFilters();
@@ -200,7 +209,13 @@ function renderRound() {
     game.mode === 'recipe'
       ? `<div class="recipe-challenge">${r.target.from.map((id) => `<div>${img(id, itemName(id))}<span>${escape(itemName(id))}</span></div>`).join('<span class="plus">+</span>')}<span class="plus">→</span>${r.answered ? `<div class="revealed-item">${img(r.target.id, target.name)}<span>${escape(target.name)}</span></div>` : '<div class="mystery">?</div>'}</div>`
       : img(r.target.id, '', 'quiz-image');
-  workspace.innerHTML = `<section class="quiz"><button class="text-link" data-back>← ${t.back}</button><div class="quiz-meta"><span>${t[game.mode + 'Game']}</span><span>${t.round} ${game.index} / 10</span><span>${t.score}: ${game.score}</span></div><progress value="${game.index - 1}" max="10" aria-label="${t.progress}"></progress><div class="quiz-center"><p class="eyebrow">${t[game.mode === 'recipe' ? 'recipeGame' : 'iconGame']}</p><h1>${game.mode === 'recipe' ? t.buildWhat : t.what}</h1>${image}${game.mode === 'word' ? `<form id="answer-form"><input id="answer" aria-label="${t.answer}" placeholder="${t.answer}" autocomplete="off" ${r.answered ? 'disabled' : ''}><button class="button primary" ${r.answered ? 'disabled' : ''}>${t.check}</button></form><p class="muted">${t.validNames}</p>` : `<div class="answer-options">${r.options.map((option, index) => `<button class="answer-option ${r.answered && option.id === r.target.id ? 'correct' : ''} ${r.answered && r.selected === option.id && option.id !== r.target.id ? 'incorrect' : ''}" data-answer="${option.id}" ${r.answered ? 'disabled' : ''}><span>${String.fromCharCode(65 + index)}</span>${escape(itemName(option.id))}</button>`).join('')}</div>`}<div id="feedback" aria-live="polite">${r.answered ? `<div class="feedback ${r.correct ? 'success' : 'failure'}"><strong>${r.correct ? t.correct : t.wrong + ': ' + escape(target.name)}</strong><button class="text-link" data-item="${r.target.id}">${t.learn} ↗</button></div>` : ''}</div><div class="quiz-actions">${r.answered ? `<button class="button primary" data-next>${game.index === 10 ? t.finish : t.next} →</button>` : `<button class="text-link" data-skip>${t.skip} →</button>`}</div></div></section>`;
+  workspace.innerHTML = `<section class="quiz"><button class="text-link" data-back>← ${t.back}</button><div class="quiz-meta"><span>${t[game.mode + 'Game']}</span><span>${t.round} ${game.index} / 10</span><span>${t.score}: ${game.score}</span></div><progress value="${game.index - 1}" max="10" aria-label="${t.progress}"></progress><div class="quiz-center"><p class="eyebrow">${t[game.mode === 'recipe' ? 'recipeGame' : 'iconGame']}</p><h1>${game.mode === 'recipe' ? t.buildWhat : t.what}</h1>${image}${game.mode === 'word' ? `<form id="answer-form"><input id="answer" aria-label="${t.answer}" placeholder="${t.answer}" autocomplete="off" ${r.answered ? 'disabled' : ''}><button class="button primary" ${r.answered ? 'disabled' : ''}>${t.check}</button></form><p class="muted">${t.validNames}</p>` : `${game.mode === 'recipe' ? `<label class="recipe-settings"><input id="recipe-images" type="checkbox" ${showRecipeImages ? 'checked' : ''}>${t.showImages}</label>` : ''}<div class="answer-options">${r.options.map((option, index) => `<button class="answer-option ${r.answered && option.id === r.target.id ? 'correct' : ''} ${r.answered && r.selected === option.id && option.id !== r.target.id ? 'incorrect' : ''}" data-answer="${option.id}" ${r.answered ? 'disabled' : ''}><span>${String.fromCharCode(65 + index)}</span>${game.mode === 'recipe' && showRecipeImages ? img(option.id, '', 'answer-image') : ''}${escape(itemName(option.id))}</button>`).join('')}</div>`}<div id="feedback" aria-live="polite">${r.answered ? `<div class="feedback ${r.correct ? 'success' : 'failure'}"><strong>${r.correct ? t.correct : t.wrong + ': ' + escape(target.name)}</strong><button class="text-link" data-item="${r.target.id}">${t.learn} ↗</button></div>` : ''}</div><div class="quiz-actions">${r.answered ? `<button class="button primary" data-next>${game.index === 10 ? t.finish : t.next} →</button>` : `<button class="text-link" data-skip>${t.skip} →</button>`}</div></div></section>`;
+  $('#recipe-images')?.addEventListener('change', (event) => {
+    showRecipeImages = event.target.checked;
+    write('forja.recipeImages', showRecipeImages);
+    renderRound();
+    $('#recipe-images').focus();
+  });
   $('#answer-form')?.addEventListener('submit', (event) => {
     event.preventDefault();
     const answer = $('#answer').value;

@@ -945,6 +945,29 @@ progress::-webkit-progress-value {
   padding: 19px;
   font-size: 14px;
 }
+.recipe-settings {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin-top: 24px;
+  color: var(--muted);
+  font-size: 13px;
+  cursor: pointer;
+}
+.recipe-settings input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--gold);
+  cursor: pointer;
+}
+.answer-option .answer-image {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+}
 .answer-option span {
   color: var(--gold);
   border: 1px solid var(--border);
@@ -1454,6 +1477,8 @@ progress::-webkit-progress-value {
 }
 .toolbar select:focus {
   outline: none;
+}
+.toolbar select:focus-visible:not([data-pointer-focus]) {
   border-color: var(--gold);
   box-shadow: 0 0 0 1px var(--gold);
 }
