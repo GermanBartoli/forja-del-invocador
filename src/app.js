@@ -326,49 +326,6 @@ dialog.addEventListener('click', (event) => {
       dialog.close();
   }
 });
-// El gesto inicial lleva al arsenal; el resto de la página conserva su desplazamiento normal.
-let heroScrollUntil = 0;
-window.addEventListener(
-  'wheel',
-  (event) => {
-    if (page() !== 'guide' || dialog.open || event.ctrlKey || event.deltaY <= 0) return;
-    if (Date.now() < heroScrollUntil) {
-      event.preventDefault();
-      return;
-    }
-    const hero = $('#hero');
-    if (
-      !hero.hidden &&
-      hero.getBoundingClientRect().bottom > window.innerHeight / 2 &&
-      $('#library')
-    ) {
-      event.preventDefault();
-      const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const duration = 800;
-      heroScrollUntil = Date.now() + (reducedMotion ? 0 : duration + 100);
-      const start = window.scrollY;
-      const padding = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
-      const destination = Math.min(
-        start + $('#library').getBoundingClientRect().top - padding,
-        document.documentElement.scrollHeight - window.innerHeight,
-      );
-      if (reducedMotion) {
-        window.scrollTo({ top: destination, behavior: 'instant' });
-        return;
-      }
-      const startedAt = performance.now();
-      const animate = (now) => {
-        if (page() !== 'guide' || dialog.open) return;
-        const progress = Math.min((now - startedAt) / duration, 1);
-        const eased = progress < 0.5 ? 4 * progress ** 3 : 1 - (-2 * progress + 2) ** 3 / 2;
-        window.scrollTo({ top: start + (destination - start) * eased, behavior: 'instant' });
-        if (progress < 1) requestAnimationFrame(animate);
-      };
-      requestAnimationFrame(animate);
-    }
-  },
-  { passive: false },
-);
 const headerObserver = new ResizeObserver(([entry]) => {
   document.documentElement.style.setProperty('--header-height', entry.target.offsetHeight + 'px');
 });
