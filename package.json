@@ -1,6 +1,6 @@
 {
   "name": "forja-del-invocador",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,5 +9,5 @@
     "sync": "node scripts/sync.mjs",
     "test": "node --test"
   },
-  "packageManager": "pnpm@11.25.0"
+  "packageManager": "pnpm@12.18.0"
 }
