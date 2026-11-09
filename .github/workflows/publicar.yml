@@ -14,13 +14,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      - run: pnpm install --frozen-lockfile
       - name: Verificar y compilar
         run: |
-          npm test
-          npm run build
+          pnpm test
+          pnpm run build
       - name: Preparar GitHub Pages
         run: node scripts/preparar-github-pages.mjs forja-del-invocador https://forja-del-invocador.pages.dev
       - name: Guardar compilación de Cloudflare
@@ -39,6 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -52,6 +55,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy dist --project-name=forja-del-invocador --branch=main --commit-hash=${{ github.sha }}
+          packageManager: pnpm
   github-pages:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: validar

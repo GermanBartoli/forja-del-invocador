@@ -36,10 +36,10 @@ Una armería para aprender los objetos de League of Legends, creada por Germán 
 
 Requiere Node.js 22 o superior. No requiere instalar dependencias de aplicación.
 
-1. `npm run sync`: descarga una copia coherente de los cuatro catálogos del último parche disponible.
-2. `npm test`: verifica datos, búsqueda, filtros y generación de rondas.
-3. `npm run build`: genera `dist/`.
-4. `npm run dev`: sirve `dist/` en `http://127.0.0.1:4173`.
+1. `pnpm run sync`: descarga una copia coherente de los cuatro catálogos del último parche disponible.
+2. `pnpm test`: verifica datos, búsqueda, filtros y generación de rondas.
+3. `pnpm run build`: genera `dist/`.
+4. `pnpm run dev`: sirve `dist/` en `http://127.0.0.1:4173`.
 
 ## Estructura
 
@@ -64,7 +64,7 @@ El progreso y los favoritos se guardan en el navegador, sin cuentas ni sincroniz
 
 ## Publicación
 
-Sitio estático en Cloudflare Pages. Comando de build: `npm run build`. Directorio de salida: `dist`. Rama de producción: `main`.
+Sitio estático en Cloudflare Pages. Comando de build: `pnpm run build`. Directorio de salida: `dist`. Rama de producción: `main`.
 
 Cada push a `main` ejecuta `.github/workflows/publicar.yml`: pruebas, build y despliegue en el proyecto existente `forja-del-invocador`. Los pull requests y las otras ramas solo validan. El token se guarda en el secreto de GitHub Actions `CLOUDFLARE_API_TOKEN`; nunca en los archivos del proyecto. Wrangler tiene una versión fija en el workflow y no agrega dependencias a la aplicación.
 
