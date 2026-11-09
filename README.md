@@ -1,5 +1,22 @@
 # Forja del Invocador
 
+**Aprendé los objetos de League of Legends, sus recetas y sus nombres oficiales en cuatro regiones.**
+
+[![Repositorio](https://img.shields.io/badge/GitHub-GermanBartoli-181717?logo=github)](https://github.com/GermanBartoli/forja-del-invocador)
+[![Verificaciones](https://github.com/GermanBartoli/forja-del-invocador/actions/workflows/publicar.yml/badge.svg)](https://github.com/GermanBartoli/forja-del-invocador/actions/workflows/publicar.yml)
+
+[Abrir sitio](https://forja-del-invocador.pages.dev/) · [Empezar](#primeros-pasos) · [Mapa del repositorio](#mapa-del-repositorio) · [Autoría](#autoría-de-esta-documentación)
+
+![Vista del proyecto: Forja del Invocador](docs/images/vista-actual.jpg)
+
+*Captura de la página publicada, tomada el 9 de noviembre de 2026. Conservada sin redimensionar ni recomprimir.*
+
+## Primeros pasos
+
+1. Pulsá **Explorar objetos** para ir al arsenal y buscá por nombre o estadística.
+2. Abrí una ficha para recorrer componentes, costos y mejoras; guardá tus favoritos en este navegador.
+3. Entrá en Entrenamiento y elegí ícono, receta o nombre para jugar una partida de diez rondas.
+
 ## Enlaces
 
 - [Sitio publicado en Cloudflare Pages](https://forja-del-invocador.pages.dev/)
@@ -7,7 +24,7 @@
 
 Una armería para aprender los objetos de League of Legends, creada por Germán Bartoli con la colaboración de Codex.
 
-## Primera versión
+## Funciones disponibles
 
 - Catálogo de objetos comprables de la Grieta del Invocador, con búsqueda simultánea en cuatro idiomas oficiales: español LAS (`es_AR`), LAN (`es_MX`), España (`es_ES`) e inglés (`en_US`).
 - Filtros por estadísticas, categorías superpuestas, etapas y precio. Favoritos locales.
@@ -63,8 +80,20 @@ Datos e íconos: [Riot Data Dragon](https://developer.riotgames.com/docs/lol#dat
 
 ## Mejoras de la versión 1.1.0
 
-- Portada de pantalla completa con salto al arsenal al desplazar la rueda.
+- Portada de pantalla completa con desplazamiento natural. El salto automático con la rueda se eliminó; usá «Explorar objetos» para ir directamente al arsenal.
 - Cinco ilustraciones de objetos de 512 px incluidas localmente desde [League of Legends Wiki](https://wiki.leagueoflegends.com/en-us/Infinity_Edge). Los recursos pertenecen a Riot Games.
 - Recetas con imagen y nombre del resultado; diez objetivos diferentes por partida.
 - Rutas `#games/icon`, `#games/recipe` y `#games/word` para volver al entrenamiento con el navegador.
 - Filtros persistentes y enlace al portfolio de Germán Bartoli.
+
+## Mapa del repositorio
+
+- [package.json](<package.json>)
+- [index.html](<index.html>)
+- [docs/PUBLICACION.md](<docs/PUBLICACION.md>)
+
+## Autoría de esta documentación
+
+Repositorio mantenido por [Germán Bartoli](https://github.com/GermanBartoli). Guía revisada y actualizada con **Codex**, coautor de esta actualización documental. Los autores, colaboradores, licencias y recursos de terceros conservan sus créditos originales.
+
+Los commits de esta revisión incluyen `Co-authored-by: Codex <noreply@openai.com>`; esta atribución no modifica la autoría del historial anterior.
