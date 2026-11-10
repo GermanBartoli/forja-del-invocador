@@ -5,7 +5,7 @@
 [![Repositorio](https://img.shields.io/badge/GitHub-GermanBartoli-181717?logo=github)](https://github.com/GermanBartoli/forja-del-invocador)
 [![Verificaciones](https://github.com/GermanBartoli/forja-del-invocador/actions/workflows/publicar.yml/badge.svg)](https://github.com/GermanBartoli/forja-del-invocador/actions/workflows/publicar.yml)
 
-[Abrir sitio](https://forja-del-invocador.pages.dev/) · [Empezar](#primeros-pasos) · [Mapa del repositorio](#mapa-del-repositorio) · [Autoría](#autoría-de-esta-documentación)
+[Abrir en Cloudflare](https://forja-del-invocador.pages.dev/) · [Abrir en GitHub Pages](https://germanbartoli.github.io/forja-del-invocador/) · [Empezar](#primeros-pasos) · [Mapa del repositorio](#mapa-del-repositorio) · [Autoría](#autoría-de-esta-documentación)
 
 ![Vista del proyecto: Forja del Invocador](docs/images/vista-actual.jpg)
 
