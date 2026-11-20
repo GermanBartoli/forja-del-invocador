@@ -281,7 +281,7 @@ document.addEventListener('click', (event) => {
     game = null;
     location.hash = 'games';
   }
-  if (button.hasAttribute('data-retry')) init();
+  if (button.hasAttribute('data-retry')) init(document.activeElement === button);
 });
 $('#locale').addEventListener('change', (event) => {
   locale = event.target.value;
@@ -340,15 +340,17 @@ for (const type of ['keydown', 'blur']) {
     delete event.currentTarget.dataset.pointerFocus;
   });
 }
-async function init() {
+async function init(devolverFoco = false) {
   shell();
   $('#status').textContent = t.loading;
   try {
     payload = await loadCatalog();
     items = catalog(payload.data, locale);
     render();
+    if (devolverFoco && document.activeElement === document.body) $('#main').focus({ preventScroll: true });
   } catch {
     $('#status').innerHTML = `${t.error} <button class="button" data-retry>${t.retry}</button>`;
+    if (devolverFoco && document.activeElement === document.body) $('[data-retry]').focus({ preventScroll: true });
   }
 }
 init();
