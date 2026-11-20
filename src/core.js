@@ -76,7 +76,7 @@ export function makeRound(items, mode, previous = []) {
   const excluded = new Set(Array.isArray(previous) ? previous : [previous]);
   const target = shuffle(pool.filter((item) => !excluded.has(item.id)))[0];
   if (!target) return null;
-  const recipeKey = (item) => [...(item.from || [])].sort().join(',');
+  const recipeKey = (item) => (item.from || []).toSorted().join(',');
   const seen = new Set([target.name]);
   const alternatives = shuffle(
     items.filter(

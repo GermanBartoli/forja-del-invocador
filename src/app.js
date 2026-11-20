@@ -314,18 +314,20 @@ document.addEventListener('keydown', (event) => {
     $('#search').focus();
   }
 });
-dialog.addEventListener('click', (event) => {
-  if (event.target === dialog) {
-    const rect = dialog.getBoundingClientRect();
-    if (
-      event.clientX < rect.left ||
-      event.clientX > rect.right ||
-      event.clientY < rect.top ||
-      event.clientY > rect.bottom
-    )
-      dialog.close();
-  }
-});
+if (!('closedBy' in HTMLDialogElement.prototype)) {
+  dialog.addEventListener('click', (event) => {
+    if (event.target === dialog) {
+      const rect = dialog.getBoundingClientRect();
+      if (
+        event.clientX < rect.left ||
+        event.clientX > rect.right ||
+        event.clientY < rect.top ||
+        event.clientY > rect.bottom
+      )
+        dialog.close();
+    }
+  });
+}
 const headerObserver = new ResizeObserver(([entry]) => {
   document.documentElement.style.setProperty('--header-height', entry.target.offsetHeight + 'px');
 });
