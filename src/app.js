@@ -292,6 +292,13 @@ $('#locale').addEventListener('change', (event) => {
   if (game?.finished) results();
   if (dialog.open) detail(dialog.dataset.item);
 });
+$('.skip').addEventListener('click', evento => {
+  if (evento.ctrlKey || evento.metaKey || evento.shiftKey || evento.altKey) return;
+  evento.preventDefault();
+  const contenido = $('#main');
+  contenido.focus({ preventScroll: true });
+  contenido.scrollIntoView({ block: 'start', behavior: 'instant' });
+});
 window.addEventListener('hashchange', () => {
   if (location.hash === '#library') {
     game = null;
