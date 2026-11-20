@@ -57,7 +57,7 @@ const itemTier = (item) =>
       : 'finished'
     : 'basic';
 const heroImg = (id) =>
-  `<img src="/images/items/${id}.webp" alt="" width="512" height="512">`;
+  `<img src="/images/items/${id}.png" alt="" width="512" height="512">`;
 function shell() {
   document.documentElement.lang = locale.replace('_', '-');
   $('#locale').value = locale;
