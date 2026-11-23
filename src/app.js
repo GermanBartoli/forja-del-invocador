@@ -1,6 +1,7 @@
 import { locales, catalog, categories, matches, accepts, makeRound } from './core.js';
 import { loadCatalog, iconUrl } from './data.js';
 import { dictionary, regionNames } from './i18n.js';
+import { mostrarCampeones } from './campeones.js';
 const $ = (selector) => document.querySelector(selector);
 const escape = (value) =>
   String(value ?? '').replace(
@@ -41,12 +42,12 @@ if (!Number.isFinite(progress.played) || !Number.isFinite(progress.correct))
   progress = { played: 0, correct: 0 };
 const workspace = $('#workspace');
 const dialog = $('#detail');
-const page = () =>
-  gameMode()
-    ? 'games'
-    : ['games', 'favorites'].includes(location.hash.slice(1))
-      ? location.hash.slice(1)
-      : 'guide';
+function page() {
+  if (/^#campeones(?:\/|$)/.test(location.hash)) return 'campeones';
+  if (gameMode()) return 'games';
+  const ruta = location.hash.slice(1);
+  return ['games', 'favorites'].includes(ruta) ? ruta : 'guide';
+}
 const img = (id, alt = '', className = '') =>
   `<img class="${className}" src="${iconUrl(payload.version, id)}" alt="${escape(alt)}" width="64" height="64" loading="lazy">`;
 const itemName = (id) => payload.data[locale].data[id]?.name || id;
@@ -61,7 +62,7 @@ const heroImg = (id) =>
 function shell() {
   document.documentElement.lang = locale.replace('_', '-');
   $('#locale').value = locale;
-  $('#nav').innerHTML = ['guide', 'games', 'favorites']
+  $('#nav').innerHTML = ['guide', 'campeones', 'games', 'favorites']
     .map(
       (key) =>
         `<a href="#${key}" ${page() === key ? 'aria-current="page"' : ''}>${t[key]}${key === 'favorites' ? ` <small>${favorites.size}</small>` : ''}</a>`,
@@ -78,6 +79,10 @@ function shell() {
 }
 function render() {
   shell();
+  if (page() === 'campeones') {
+    mostrarCampeones(workspace, locale, t, escape);
+    return;
+  }
   if (!payload) return;
   if (page() === 'games') {
     renderGames();
@@ -289,7 +294,7 @@ $('#locale').addEventListener('change', (event) => {
   t = dictionary(locale);
   if (payload) items = catalog(payload.data, locale);
   render();
-  if (game?.finished) results();
+  if (page() === 'games' && game?.finished) results();
   if (dialog.open) detail(dialog.dataset.item);
 });
 $('.skip').addEventListener('click', evento => {
@@ -348,12 +353,13 @@ for (const type of ['keydown', 'blur']) {
   });
 }
 async function init(devolverFoco = false) {
-  shell();
+  render();
   $('#status').textContent = t.loading;
   try {
     payload = await loadCatalog();
     items = catalog(payload.data, locale);
-    render();
+    if (page() === 'campeones') shell();
+    else render();
     if (devolverFoco && document.activeElement === document.body) $('#main').focus({ preventScroll: true });
   } catch {
     $('#status').innerHTML = `${t.error} <button class="button" data-retry>${t.retry}</button>`;

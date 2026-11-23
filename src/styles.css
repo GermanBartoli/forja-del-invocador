@@ -1505,3 +1505,22 @@ progress::-webkit-progress-value {
 
 /* Firma de autor con acceso al portfolio. */
 .gb-credit{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;width:100%;box-sizing:border-box;padding:16px;margin:0;color:inherit;font:12px/1.4 system-ui,sans-serif;text-align:center}.gb-credit a{display:inline-flex;align-items:center;gap:10px;color:inherit;text-decoration:none}.gb-credit a:hover{text-decoration:underline}.gb-credit a:focus-visible{outline:2px solid currentColor;outline-offset:5px;border-radius:6px}.gb-credit img{display:block;width:64px;height:64px;max-width:none;object-fit:contain;border-radius:8px;flex:none}
+
+.campeones { padding: 32px 0 58px; }
+.campeones h1 { font-size: clamp(2.2rem, 6vw, 4rem); line-height: 1.1; margin: 0 0 24px; }
+.campeones .search { max-width: 480px; }
+.estado-campeones { margin: 16px 0; color: var(--muted); }
+.lista-campeones { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(164px, 100%), 1fr)); gap: 10px; }
+.lista-campeones a { display: flex; align-items: center; gap: 12px; padding: 8px; background: var(--panel); border: 1px solid var(--border); }
+.lista-campeones a:hover { border-color: var(--gold); }
+.ficha-campeon { display: grid; grid-template-columns: minmax(190px, 308px) minmax(0, 720px); gap: clamp(24px, 5vw, 70px); margin-top: 24px; }
+.retrato-campeon { display: block; width: 100%; height: auto; border: 1px solid var(--border); }
+.habilidades { list-style: none; padding: 0; }
+.habilidades li { display: flex; align-items: baseline; gap: 16px; border-top: 1px solid var(--border); padding: 16px 0; }
+.habilidades p { color: var(--muted); }
+.tecla { min-width: 4rem; text-align: center; border: 1px solid var(--border); color: var(--gold); }
+@media (max-width: 650px) {
+  #nav { gap: clamp(8px, 3vw, 20px); }
+  .ficha-campeon { grid-template-columns: 1fr; }
+  .retrato-campeon { max-height: 280px; object-fit: cover; object-position: center 22%; }
+}

@@ -5,6 +5,12 @@ export const regionNames = {
   en_US: 'English',
 };
 const es = {
+  campeones: 'Campeones',
+  habilidades: 'Habilidades',
+  buscarCampeon: 'Buscar campeón',
+  cargandoCampeones: 'Cargando campeones…',
+  sinCampeones: 'No se encontraron campeones.',
+  pasiva: 'Pasiva',
   guide: 'Arsenal',
   games: 'Entrenamiento',
   favorites: 'Mis objetos',
@@ -117,6 +123,12 @@ const es = {
   noInto: 'Este objeto no tiene mejoras comprables en el catálogo actual.',
 };
 const en = {
+  campeones: 'Champions',
+  habilidades: 'Abilities',
+  buscarCampeon: 'Search champions',
+  cargandoCampeones: 'Loading champions…',
+  sinCampeones: 'No champions found.',
+  pasiva: 'Passive',
   guide: 'Armory',
   games: 'Training',
   favorites: 'My items',
