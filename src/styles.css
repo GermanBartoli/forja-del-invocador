@@ -6,6 +6,7 @@
   box-sizing: border-box;
 }
 html {
+  scrollbar-gutter: stable;
   scroll-behavior: smooth;
   scroll-padding-top: 100px;
 }
@@ -672,7 +673,11 @@ footer p {
   max-width: 780px;
   margin-top: 6px;
 }
+html:has(#detail[open]) {
+  overflow: hidden;
+}
 dialog {
+  overscroll-behavior: contain;
   border: 1px solid #5b5739;
   border-radius: 12px;
   background: #141c19;
