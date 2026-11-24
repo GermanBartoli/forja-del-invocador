@@ -5,6 +5,7 @@ export const regionNames = {
   en_US: 'English',
 };
 const es = {
+  grieta:'La Grieta',
   campeones: 'Campeones',
   habilidades: 'Habilidades',
   buscarCampeon: 'Buscar campeón',
@@ -123,6 +124,7 @@ const es = {
   noInto: 'Este objeto no tiene mejoras comprables en el catálogo actual.',
 };
 const en = {
+  grieta:'Rift hub',
   campeones: 'Champions',
   habilidades: 'Abilities',
   buscarCampeon: 'Search champions',

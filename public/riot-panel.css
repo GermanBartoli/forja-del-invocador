@@ -1,0 +1,205 @@
+.riot-panel {
+  color: inherit;
+  min-width: 0;
+  max-width: 100%;
+}
+.riot-panel h2,
+.riot-panel h3,
+.riot-panel h4 {
+  margin: 1.3rem 0 0.65rem;
+}
+.riot-panel :is(input, select, button),
+#riot-region {
+  font: inherit;
+  color: inherit;
+  background: #152023;
+  border: 1px solid #566362;
+  border-radius: 0.4rem;
+  padding: 0.56rem 0.8rem;
+  max-width: 100%;
+}
+.riot-panel button,
+.riot-panel summary {
+  cursor: pointer;
+}
+.riot-panel :is(button:hover, button[aria-pressed='true']),
+.riot-panel summary:hover {
+  border-color: #d3af67;
+  color: #ffda91;
+}
+.riot-panel label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.35rem 0.55rem 0.35rem 0;
+  flex-wrap: wrap;
+}
+.riot-controles,
+.riot-buscar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+  margin: 0.8rem 0;
+}
+.riot-respuesta {
+  min-width: 0;
+}
+.riot-tabla {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 0.9rem 0;
+}
+.riot-oro {
+  margin: 0.8rem 0;
+  padding: 0.8rem 1rem;
+  border: 1px solid #485855;
+  border-radius: 0.45rem;
+  background: #101b1c;
+}
+.riot-oro figcaption {
+  font-weight: 650;
+}
+.riot-oro svg {
+  width: 100%;
+  max-height: 160px;
+  display: block;
+}
+.riot-oro polyline {
+  fill: none;
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+}
+.riot-oro .azul {
+  stroke: #82c6ff;
+}
+.riot-oro .rojo {
+  stroke: #ff9a8d;
+  stroke-dasharray: 7 3;
+}
+.riot-oro .cursor {
+  stroke: #ddd;
+  stroke-dasharray: 2 4;
+}
+.riot-oro input {
+  width: 100%;
+  padding: 0;
+  accent-color: #d5b777;
+}
+.riot-oro output {
+  display: block;
+  font-variant-numeric: tabular-nums;
+}
+.riot-tabla table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.92rem;
+}
+.riot-tabla :is(td, th) {
+  text-align: left;
+  padding: 0.55rem 0.7rem;
+  border-bottom: 1px solid #43504d;
+  vertical-align: top;
+}
+.riot-tabla th {
+  color: #e3cb99;
+}
+.riot-partida {
+  background: #142020;
+  border: 1px solid #445451;
+  border-radius: 0.45rem;
+  margin: 0.45rem 0;
+  padding: 0.65rem 0.85rem;
+}
+.riot-partida summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+}
+.riot-partida summary::before {
+  content: '▸';
+  color: #d4ad68;
+}
+.riot-partida[open] summary::before {
+  content: '▾';
+}
+.riot-gana {
+  color: #8bd4b1;
+}
+.riot-pierde {
+  color: #ffac9b;
+}
+.riot-panel p {
+  margin: 0.75rem 0;
+  line-height: 1.5;
+}
+.riot-galeria {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
+  gap: 0.65rem;
+}
+.riot-galeria a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  color: inherit;
+  text-decoration: none;
+  padding: 0.75rem;
+  background: #162021;
+  border: 1px solid #45514b;
+  border-radius: 0.5rem;
+}
+.riot-galeria img {
+  border-radius: 0.45rem;
+  max-width: 100%;
+  height: auto;
+}
+.riot-portada {
+  padding: clamp(1.2rem, 4vw, 3rem);
+  border: 1px solid #665735;
+  border-radius: 0.7rem;
+  background: linear-gradient(110deg, #182521, #111a19);
+}
+.forja-grieta {
+  background:
+    linear-gradient(90deg, #10201dfc 12%, #12201ef5 49%, #1724216a),
+    url('https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Kindred_0.jpg') center 37% /
+      cover;
+  min-height: 180px;
+}
+.forja-grieta p {
+  max-width: 54ch;
+}
+.riot-identidad {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.3rem 0 0.5rem;
+}
+.riot-identidad img {
+  border: 1px solid #b49657;
+  border-radius: 0.6rem;
+}
+.riot-identidad h2 {
+  margin: 0;
+}
+.riot-inventario {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+}
+.riot-politicas {
+  display: inline-block;
+  color: #d5c197;
+  margin: 2rem 0 0.6rem;
+}
+.riot-portada h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 4rem);
+}
+.riot-panel :focus-visible {
+  outline: 2px solid #efce86;
+  outline-offset: 2px;
+}

@@ -11,6 +11,8 @@
 
 *Captura de la página publicada, tomada el 9 de noviembre de 2026. Conservada sin redimensionar ni recomprimir.*
 
+[Políticas de Riot aplicadas al proyecto](docs/POLITICAS_RIOT.md)
+
 ## Primeros pasos
 
 1. Pulsá **Explorar objetos** para ir al arsenal y buscá por nombre o estadística.
@@ -23,6 +25,12 @@
 - [Repositorio en GitHub](https://github.com/GermanBartoli/forja-del-invocador)
 
 Una armería para aprender los objetos de League of Legends, creada por Germán Bartoli con la colaboración de Codex.
+
+## La Grieta
+
+[Explorar La Grieta](https://forja-del-invocador.pages.dev/#grieta). Incluye perfiles por región, maestrías completas, desafíos, partidas con detalle y cronología, comparaciones, rotación gratuita, ligas y divisiones, Clash, partida activa y estado regional. El Atlas de runas, hechizos y colas y el perfil ficticio de ejemplo funcionan durante la revisión de Riot.
+
+Las consultas a Riot se realizan desde Pages Functions con el secreto de producción exclusivo de Forja. Para el prototipo privado, `pnpm run build` y `pnpm run dev` sirven el sitio y las funciones en loopback con la variable de proceso `RIOT_API_KEY`. `node scripts/referencias-riot.mjs` actualiza los índices públicos desde las fuentes oficiales.
 
 ## Funciones disponibles
 

@@ -1,6 +1,7 @@
 import { locales, catalog, categories, matches, accepts, makeRound } from './core.js';
 import { loadCatalog, iconUrl } from './data.js';
 import { dictionary, regionNames } from './i18n.js';
+import { mostrarGrieta } from './grieta.js';
 import { mostrarCampeones } from './campeones.js';
 const $ = (selector) => document.querySelector(selector);
 const escape = (value) =>
@@ -44,9 +45,10 @@ const workspace = $('#workspace');
 const dialog = $('#detail');
 function page() {
   if (/^#campeones(?:\/|$)/.test(location.hash)) return 'campeones';
+  if (/^#grieta(?:[/?]|$)/.test(location.hash)) return 'grieta';
   if (gameMode()) return 'games';
   const ruta = location.hash.slice(1);
-  return ['games', 'favorites'].includes(ruta) ? ruta : 'guide';
+  return ['games', 'favorites','grieta'].includes(ruta) ? ruta : 'guide';
 }
 const img = (id, alt = '', className = '') =>
   `<img class="${className}" src="${iconUrl(payload.version, id)}" alt="${escape(alt)}" width="64" height="64" loading="lazy">`;
@@ -62,7 +64,7 @@ const heroImg = (id) =>
 function shell() {
   document.documentElement.lang = locale.replace('_', '-');
   $('#locale').value = locale;
-  $('#nav').innerHTML = ['guide', 'campeones', 'games', 'favorites']
+  $('#nav').innerHTML = ['guide', 'campeones', 'grieta', 'games', 'favorites']
     .map(
       (key) =>
         `<a href="#${key}" ${page() === key ? 'aria-current="page"' : ''}>${t[key]}${key === 'favorites' ? ` <small>${favorites.size}</small>` : ''}</a>`,
@@ -70,7 +72,7 @@ function shell() {
     .join('');
   $('#hero').hidden = page() !== 'guide';
   $('#hero').innerHTML =
-    `<div class="hero-copy"><p class="eyebrow"><span class="line"></span>${t.eyebrow}</p><h1>${t.title}<br><em>${t.accent}</em></h1><p class="intro">${t.intro}</p><div class="hero-actions"><a class="button primary" href="#games">${t.practice} <span>↗</span></a><a class="text-link" href="#library">${t.explore} ↓</a></div><div class="hero-meta"><span class="live-dot"></span>${t.official}<span>◇</span>${t.regions}</div></div><div class="hero-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbit orbit-three"></div><div class="art-center">${payload ? heroImg('3031') : ''}</div><div class="art-item art-a">${payload ? heroImg('3089') : ''}</div><div class="art-item art-b">${payload ? heroImg('3083') : ''}</div><div class="art-item art-c">${payload ? heroImg('3157') : ''}</div><div class="art-item art-d">${payload ? heroImg('3078') : ''}</div><span class="art-label">ARSENAL / ${payload?.version || 'LOL'}</span><span class="spark s1">✧</span><span class="spark s2">✧</span></div>`;
+    `<div class="hero-copy"><p class="eyebrow"><span class="line"></span>${t.eyebrow}</p><h1>${t.title}<br><em>${t.accent}</em></h1><p class="intro">${t.intro}</p><div class="hero-actions"><a class="button primary" href="#games">${t.practice} <span>↗</span></a><a class="text-link" href="#library">${t.explore} ↓</a><a class="text-link" href="#grieta">${t.grieta} ↗</a></div><div class="hero-meta"><span class="live-dot"></span>${t.official}<span>◇</span>${t.regions}</div></div><div class="hero-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbit orbit-three"></div><div class="art-center">${payload ? heroImg('3031') : ''}</div><div class="art-item art-a">${payload ? heroImg('3089') : ''}</div><div class="art-item art-b">${payload ? heroImg('3083') : ''}</div><div class="art-item art-c">${payload ? heroImg('3157') : ''}</div><div class="art-item art-d">${payload ? heroImg('3078') : ''}</div><span class="art-label">ARSENAL / ${payload?.version || 'LOL'}</span><span class="spark s1">✧</span><span class="spark s2">✧</span></div>`;
   $('#footer').innerHTML =
     `<div class="footer-top"><a class="footer-brand" href="#guide">◇ FORJA DEL INVOCADOR</a><span>${t.footer}</span><a href="https://developer.riotgames.com/docs/lol#data-dragon" target="_blank" rel="noreferrer">${t.source} ↗</a></div><p>${t.disclaimer}</p><p>${t.local}</p><a class="portfolio-link" href="https://germanbartoli.pages.dev/" target="_blank" rel="noreferrer"><img src="/images/german-bartoli.webp" alt="Germán Bartoli — Portfolio" width="100" height="100" loading="lazy"><span>Portfolio ↗</span></a>`;
   if (payload)
@@ -79,6 +81,7 @@ function shell() {
 }
 function render() {
   shell();
+  if (page() === 'grieta') { mostrarGrieta(workspace); return; }
   if (page() === 'campeones') {
     mostrarCampeones(workspace, locale, t, escape);
     return;
@@ -358,7 +361,7 @@ async function init(devolverFoco = false) {
   try {
     payload = await loadCatalog();
     items = catalog(payload.data, locale);
-    if (page() === 'campeones') shell();
+    if (['campeones','grieta'].includes(page())) shell();
     else render();
     if (devolverFoco && document.activeElement === document.body) $('#main').focus({ preventScroll: true });
   } catch {
