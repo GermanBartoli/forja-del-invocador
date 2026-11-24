@@ -1,3 +1,26 @@
+// Límite local por visitante; las respuestas reutilizadas no consumen intentos.
+const visitantes = new Map();
+let proximaLimpieza = 0;
+function contarBusqueda(ip, ahora) {
+  if (ahora >= proximaLimpieza) {
+    for (const [clave, ventana] of visitantes)
+      if (ventana.vence <= ahora) visitantes.delete(clave);
+    proximaLimpieza = ahora + 60000;
+  }
+  const ventana = visitantes.get(ip);
+  if (!ventana || ventana.vence <= ahora) {
+    if (visitantes.size >= 10000 && !ventana) throw pausa(60);
+    visitantes.set(ip, { cantidad: 1, vence: ahora + 60000 });
+  } else {
+    if (ventana.cantidad >= 20) throw pausa((ventana.vence - ahora) / 1000);
+    ventana.cantidad++;
+  }
+}
+function pausa(segundos) {
+  const error = fallo(429, "Se alcanzó el límite de consultas. Intentá más tarde.");
+  error.espera = String(Math.max(1, Math.ceil(segundos)));
+  return error;
+}
 const regiones = {
   la2: 'americas',
   la1: 'americas',
@@ -31,18 +54,39 @@ export function contexto(evento) {
   const parametros = new URL(request.url).searchParams;
   const plataforma = (parametros.get('region') || 'la2').toLowerCase();
   if (!Object.hasOwn(regiones, plataforma)) throw fallo(400, 'Región desconocida.');
+  let contabilizada = false;
   async function consultar(host, ruta, segundos = 120) {
     if (!clave)
       throw fallo(503, 'La conexión pública espera la clave de producción aprobada por Riot.');
     const url = 'https://' + host + '.api.riotgames.com' + ruta;
     const cache = globalThis.caches?.default;
     const anterior = cache && (await cache.match(url));
-    if (anterior) return anterior.json();
+    if (anterior) {
+      if (anterior.status === 404) throw fallo(404, "No se encontraron datos para esta consulta.");
+      return anterior.json();
+    }
+    const clavePausa = "https://" + host + ".api.riotgames.com/__pausa";
+    const pausaGuardada = await cache?.match(clavePausa);
+    if (pausaGuardada) {
+      const restante = Number(await pausaGuardada.text()) - Date.now();
+      if (restante > 0) throw pausa(restante / 1000);
+    }
+    if (!contabilizada) {
+      contarBusqueda(request.headers.get("CF-Connecting-IP") || "local", Date.now());
+      contabilizada = true;
+    }
     const r = await fetch(url, {
       headers: { 'X-Riot-Token': clave },
       signal: AbortSignal.timeout(12000),
     });
     if (!r.ok) {
+      if (cache && r.status === 404)
+        await cache.put(url, new Response(null, { status: 404, headers: { "Cache-Control": "public, max-age=30" } }));
+      const espera = Number(r.headers.get("Retry-After"));
+      if (cache && r.status === 429 && Number.isSafeInteger(espera) && espera > 0)
+        await cache.put(clavePausa, new Response(String(Date.now() + espera * 1000), {
+          headers: { "Cache-Control": "public, max-age=" + espera },
+        }));
       const mensajes = {
         404: 'No se encontraron datos para esta consulta.',
         429: 'Riot alcanzó el límite de consultas. Intentá nuevamente en unos minutos.',
