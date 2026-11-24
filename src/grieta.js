@@ -86,15 +86,16 @@ export async function mostrarGrieta(contenedor) {
   aviso.hidden = true;
   aviso.setAttribute('role', 'status');
   panel.append(portada, aviso, nav, salida, politicas);
-  pedir('/api/player', { accion: 'disponibilidad' })
+  const acceso = pedir('/api/player', { accion: 'disponibilidad' })
     .then((d) => {
       if (!d.disponible) {
         aviso.hidden = false;
         aviso.textContent =
           'Las consultas públicas esperan la aprobación de Riot. El Atlas y el perfil de ejemplo ya están disponibles.';
       }
+      return d.disponible;
     })
-    .catch(() => {});
+    .catch(() => undefined);
   contenedor.replaceChildren(panel);
   let ref, enciclopedia;
   const catalogo = () =>
@@ -145,6 +146,8 @@ export async function mostrarGrieta(contenedor) {
       });
     }
     const form = formulario(buscar);
+    form.hidden = true;
+    acceso.then(disponible => { form.hidden = disponible === false; });
     form.append(
       boton('Detectar región', () => {
         const campo = form.querySelector('input');
@@ -669,14 +672,14 @@ export async function mostrarGrieta(contenedor) {
     Estado: estado,
     Atlas: biblioteca,
   };
-  function seleccionar(nombre) {
+  function seleccionar(nombre, id) {
     pestana = nombre;
-    guardarRuta(nombre);
+    guardarRuta(nombre, id);
     for (const b of nav.children) b.setAttribute('aria-pressed', String(b.textContent === nombre));
     if (nombre === 'Jugadores') salida.replaceChildren(jugadores());
     else cargar(salida, secciones[nombre]);
   }
   for (const nombre of Object.keys(secciones)) nav.append(boton(nombre, () => seleccionar(nombre)));
-  seleccionar(pestana);
-  if (inicialId && pestana === 'Jugadores') salida.querySelector('form')?.requestSubmit();
+  seleccionar(pestana, inicialId);
+  if (inicialId && (await acceso) !== false && panel.isConnected && pestana === 'Jugadores') salida.querySelector('form')?.requestSubmit();
 }
