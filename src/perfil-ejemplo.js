@@ -37,14 +37,12 @@ export function mostrarEjemplo(catalogo) {
     curacion: 1500 + i * 30,
     pentas: 0,
   }));
-  const coleccion = campeones
-    .slice(0, 5)
-    .map((id, i) => ({
-      championId: id,
-      championLevel: 12 - i,
-      championPoints: 81000 - i * 12000,
-      lastPlayTime: fecha - i * 86400000,
-    }));
+  const coleccion = campeones.slice(0, 5).map((id, i) => ({
+    championId: id,
+    championLevel: 12 - i,
+    championPoints: 81000 - i * 12000,
+    lastPlayTime: fecha - i * 86400000,
+  }));
   const m = {
     id: 'ejemplo',
     date: fecha,
@@ -64,12 +62,41 @@ export function mostrarEjemplo(catalogo) {
     ],
     parche: catalogo.version,
   };
+  const partidas = Array.from({ length: 8 }, (_, i) => {
+    const jugador = participantes[i % 5],
+      victoria = i % 3 !== 1;
+    return {
+      ...m,
+      id: 'ejemplo-' + i,
+      date: fecha - i * 86400000,
+      cola: i % 3 === 0 ? 440 : 420,
+      champion: jugador.campeon,
+      jugador,
+      kills: jugador.kills,
+      deaths: jugador.deaths,
+      assists: jugador.assists,
+      win: victoria,
+      equipos: m.equipos.map((e) => ({ ...e, victoria: e.equipo === 100 ? victoria : !victoria })),
+    };
+  });
+  function historial(op = {}) {
+    const filtradas = partidas.filter(
+      (m) =>
+        (!op.cola || m.cola === Number(op.cola)) &&
+        (!Number(op.dias) || m.date >= fecha - Number(op.dias) * 86400000),
+    );
+    const inicio = Number(op.inicio) || 0;
+    return {
+      matches: filtradas.slice(inicio, inicio + 5),
+      siguiente: inicio + 5 < filtradas.length ? inicio + 5 : null,
+      warnings: [],
+    };
+  }
   const datos = {
     name: 'Invocador de ejemplo',
     level: 125,
     updatedAt: new Date(fecha).toISOString(),
-    matches: [m],
-    siguiente: null,
+    ...historial(),
     ranks: [
       {
         queueType: 'RANKED_SOLO_5x5',
@@ -91,6 +118,8 @@ export function mostrarEjemplo(catalogo) {
           oro: [
             { tiempo: 0, equipos: { 100: 2500, 200: 2500 } },
             { tiempo: 600000, equipos: { 100: 16000, 200: 14200 } },
+            { tiempo: 1200000, equipos: { 100: 30700, 200: 32200 } },
+            { tiempo: 1800000, equipos: { 100: 53200, 200: 50980 } },
           ],
           eventos: [
             { tipo: 'CHAMPION_KILL', tiempo: 345000, autor: 1, objetivo: 6 },
@@ -98,11 +127,7 @@ export function mostrarEjemplo(catalogo) {
           ],
         };
       case 'historial':
-        return {
-          matches: op.dias !== '0' || (op.cola && op.cola !== '420') ? [] : [m],
-          siguiente: null,
-          warnings: [],
-        };
+        return historial(op);
       case 'maestria': {
         const c = coleccion.find((x) => x.championId === op.campeon);
         return {
